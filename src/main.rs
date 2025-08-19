@@ -1,4 +1,5 @@
-#![warn(clippy::all, clippy::pedantic)]
+#![warn(clippy::all, clippy::pedantic, clippy::print_stdout)]
+// From here on out, we should consider every use of print! or println! an oversight, therefore we teach clippy to alert us to this.
 mod editor;
 use editor::Editor;
 
