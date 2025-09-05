@@ -1,6 +1,7 @@
 use super::terminal::Size;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 
+#[derive(Clone, Copy)]
 pub enum Direction {
     PageUp,
     PageDown,
@@ -12,6 +13,7 @@ pub enum Direction {
     Right,
 }
 
+#[derive(Clone, Copy)]
 pub enum EditorCommand {
     Move(Direction),
     Resize(Size),
