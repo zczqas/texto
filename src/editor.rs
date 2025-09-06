@@ -1,10 +1,9 @@
-use crossterm::event::{Event, KeyEvent, KeyEventKind, read};
+use crossterm::event::{read, Event, KeyEvent, KeyEventKind};
 use std::{
     env,
     io::Error,
     panic::{set_hook, take_hook},
 };
-
 mod command;
 mod commandbar;
 mod documentstatus;
@@ -33,7 +32,6 @@ use self::command::{
     Edit::InsertNewline,
     System::{Dismiss, Quit, Resize, Save},
 };
-
 pub const NAME: &str = env!("CARGO_PKG_NAME");
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -65,7 +63,7 @@ impl Editor {
         editor.resize(size);
         editor
             .message_bar
-            .update_message("HELP: Ctrl-S to save | Ctrl-Q to quit");
+            .update_message("HELP: Ctrl-S = save | Ctrl-Q = quit");
 
         let args: Vec<String> = env::args().collect();
         if let Some(file_name) = args.get(1) {
@@ -79,6 +77,7 @@ impl Editor {
         editor.refresh_status();
         Ok(editor)
     }
+
     fn resize(&mut self, size: Size) {
         self.terminal_size = size;
         self.view.resize(Size {
@@ -100,10 +99,12 @@ impl Editor {
             });
         }
     }
-    pub fn refresh_status(&mut self) {
+
+    fn refresh_status(&mut self) {
         let status = self.view.get_status();
         let title = format!("{} - {NAME}", status.file_name);
         self.status_bar.update_status(status);
+
         if title != self.title && matches!(Terminal::set_title(&title), Ok(())) {
             self.title = title;
         }
@@ -119,7 +120,7 @@ impl Editor {
                 Err(err) => {
                     #[cfg(debug_assertions)]
                     {
-                        panic!("Could not read event: {err:?}")
+                        panic!("Could not read event: {err:?}");
                     }
                 }
             }
@@ -127,6 +128,7 @@ impl Editor {
             self.status_bar.update_status(status);
         }
     }
+
     fn evaluate_event(&mut self, event: Event) {
         let should_process = match &event {
             Event::Key(KeyEvent { kind, .. }) => kind == &KeyEventKind::Press,
@@ -140,6 +142,7 @@ impl Editor {
             }
         }
     }
+
     fn process_command(&mut self, command: Command) {
         match command {
             System(Quit) => {
@@ -205,6 +208,7 @@ impl Editor {
             self.show_prompt();
         }
     }
+
     fn save(&mut self, file_name: Option<&str>) {
         let result = if let Some(name) = file_name {
             self.view.save_as(name)
@@ -250,7 +254,7 @@ impl Editor {
         }
         if self.terminal_size.height > 1 {
             self.status_bar
-                .render(self.terminal_size.height.saturating_sub(2))
+                .render(self.terminal_size.height.saturating_sub(2));
         }
         if self.terminal_size.height > 2 {
             self.view.render(0);
@@ -263,6 +267,7 @@ impl Editor {
         } else {
             self.view.caret_position()
         };
+
         let _ = Terminal::move_caret_to(new_caret_pos);
         let _ = Terminal::show_caret();
         let _ = Terminal::execute();

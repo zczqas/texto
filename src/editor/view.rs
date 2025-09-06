@@ -1,13 +1,12 @@
+use std::{cmp::min, io::Error};
+
 use super::{
     DocumentStatus, Line, NAME, Position, Size, Terminal, UIComponent, VERSION,
     command::{Edit, Move},
 };
-use std::{cmp::min, io::Error};
-
 mod buffer;
-mod fileinfo;
-
 use buffer::Buffer;
+mod fileinfo;
 use fileinfo::FileInfo;
 
 #[derive(Copy, Clone, Default)]
@@ -15,12 +14,10 @@ pub struct Location {
     pub grapheme_index: usize,
     pub line_index: usize,
 }
-
 #[derive(Default)]
 pub struct View {
     buffer: Buffer,
     needs_redraw: bool,
-    // The view always starts at `(0/0)`. The `size` property determines the visible area.
     size: Size,
     text_location: Location,
     scroll_offset: Position,
@@ -35,9 +32,11 @@ impl View {
             is_modified: self.buffer.dirty,
         }
     }
+
     pub const fn is_file_loaded(&self) -> bool {
-        !self.buffer.is_file_loaded()
+        self.buffer.is_file_loaded()
     }
+
     // region: file i/o
     pub fn load(&mut self, file_name: &str) -> Result<(), Error> {
         let buffer = Buffer::load(file_name)?;
@@ -45,12 +44,14 @@ impl View {
         self.set_needs_redraw(true);
         Ok(())
     }
+
     pub fn save(&mut self) -> Result<(), Error> {
         self.buffer.save()
     }
     pub fn save_as(&mut self, file_name: &str) -> Result<(), Error> {
         self.buffer.save_as(file_name)
     }
+
     // endregion
 
     // region: command handling
@@ -80,7 +81,6 @@ impl View {
     }
 
     // endregion
-
     // region: Text editing
     fn insert_newline(&mut self) {
         self.buffer.insert_newline(self.text_location);
@@ -111,7 +111,7 @@ impl View {
             .map_or(0, Line::grapheme_count);
         let grapheme_delta = new_len.saturating_sub(old_len);
         if grapheme_delta > 0 {
-            // move right for an added grapheme (should be the regular case)
+            // Move right for an added grapheme (should be the regular case)
             self.handle_move_command(Move::Right);
         }
         self.set_needs_redraw(true);
@@ -119,11 +119,12 @@ impl View {
     // endregion
 
     // region: Rendering
+
     fn render_line(at: usize, line_text: &str) -> Result<(), Error> {
         Terminal::print_row(at, line_text)
     }
     fn build_welcome_message(width: usize) -> String {
-        if width <= 0 {
+        if width == 0 {
             return String::new();
         }
         let welcome_message = format!("{NAME} editor -- version {VERSION}");
@@ -138,6 +139,7 @@ impl View {
     // endregion
 
     // region: Scrolling
+
     fn scroll_vertically(&mut self, to: usize) {
         let Size { height, .. } = self.size;
         let offset_changed = if to < self.scroll_offset.row {
@@ -177,6 +179,7 @@ impl View {
     // endregion
 
     // region: Location and Position Handling
+
     pub fn caret_position(&self) -> Position {
         self.text_location_to_position()
             .saturating_sub(self.scroll_offset)
@@ -257,6 +260,7 @@ impl View {
     fn snap_to_valid_line(&mut self) {
         self.text_location.line_index = min(self.text_location.line_index, self.buffer.height());
     }
+
     // endregion
 }
 
@@ -264,6 +268,7 @@ impl UIComponent for View {
     fn set_needs_redraw(&mut self, value: bool) {
         self.needs_redraw = value;
     }
+
     fn needs_redraw(&self) -> bool {
         self.needs_redraw
     }
@@ -271,6 +276,7 @@ impl UIComponent for View {
         self.size = size;
         self.scroll_text_location_into_view();
     }
+
     fn draw(&mut self, origin_row: usize) -> Result<(), Error> {
         let Size { height, width } = self.size;
         let end_y = origin_row.saturating_add(height);
@@ -289,9 +295,9 @@ impl UIComponent for View {
             if let Some(line) = self.buffer.lines.get(line_idx) {
                 let left = self.scroll_offset.col;
                 let right = self.scroll_offset.col.saturating_add(width);
-                Self::render_line(current_row, &line.get_visible_graphemes(left..right))?
+                Self::render_line(current_row, &line.get_visible_graphemes(left..right))?;
             } else if current_row == top_third && self.buffer.is_empty() {
-                Self::render_line(current_row, &Self::build_welcome_message(width))?
+                Self::render_line(current_row, &Self::build_welcome_message(width))?;
             } else {
                 Self::render_line(current_row, "~")?;
             }

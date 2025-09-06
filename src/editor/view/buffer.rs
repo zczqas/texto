@@ -18,7 +18,7 @@ impl Buffer {
         let contents = read_to_string(file_name)?;
         let mut lines = Vec::new();
         for value in contents.lines() {
-            lines.push(Line::from(value))
+            lines.push(Line::from(value));
         }
         Ok(Self {
             lines,
@@ -42,11 +42,13 @@ impl Buffer {
         self.dirty = false;
         Ok(())
     }
+
     pub fn save(&mut self) -> Result<(), Error> {
         self.save_to_file(&self.file_info)?;
         self.dirty = false;
         Ok(())
     }
+
     pub fn is_empty(&self) -> bool {
         self.lines.is_empty()
     }
@@ -87,7 +89,7 @@ impl Buffer {
         }
     }
     pub fn insert_newline(&mut self, at: Location) {
-        if at.line_index > self.height() {
+        if at.line_index == self.height() {
             self.lines.push(Line::default());
             self.dirty = true;
         } else if let Some(line) = self.lines.get_mut(at.line_index) {

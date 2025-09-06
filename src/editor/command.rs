@@ -21,7 +21,6 @@ pub enum Move {
     Right,
     Down,
 }
-
 impl TryFrom<KeyEvent> for Move {
     type Error = String;
     fn try_from(event: KeyEvent) -> Result<Self, Self::Error> {
@@ -48,7 +47,6 @@ impl TryFrom<KeyEvent> for Move {
         }
     }
 }
-
 #[derive(Clone, Copy)]
 pub enum Edit {
     Insert(char),
@@ -56,7 +54,6 @@ pub enum Edit {
     Delete,
     DeleteBackward,
 }
-
 impl TryFrom<KeyEvent> for Edit {
     type Error = String;
 
@@ -87,7 +84,6 @@ pub enum System {
 
 impl TryFrom<KeyEvent> for System {
     type Error = String;
-
     fn try_from(event: KeyEvent) -> Result<Self, Self::Error> {
         let KeyEvent {
             code, modifiers, ..

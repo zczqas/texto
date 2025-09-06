@@ -7,6 +7,7 @@ use std::{
 pub struct FileInfo {
     path: Option<PathBuf>,
 }
+
 impl FileInfo {
     pub fn from(file_name: &str) -> Self {
         Self {

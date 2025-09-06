@@ -11,7 +11,6 @@ struct Message {
     text: String,
     time: Instant,
 }
-
 impl Default for Message {
     fn default() -> Self {
         Self {
@@ -46,8 +45,8 @@ impl MessageBar {
 }
 
 impl UIComponent for MessageBar {
-    fn set_needs_redraw(&mut self, needs_redraw: bool) {
-        self.needs_redraw = needs_redraw;
+    fn set_needs_redraw(&mut self, value: bool) {
+        self.needs_redraw = value;
     }
     fn needs_redraw(&self) -> bool {
         (!self.cleared_after_expiry && self.current_message.is_expired()) || self.needs_redraw
@@ -57,7 +56,7 @@ impl UIComponent for MessageBar {
         if self.current_message.is_expired() {
             // Upon expiration, we need to write out "" once to clear the message.
             // To avoid clearing more than necessary, we  keep track of the fact that we've already cleared the expired message once.
-            self.cleared_after_expiry = true
+            self.cleared_after_expiry = true;
         }
         let message = if self.current_message.is_expired() {
             ""

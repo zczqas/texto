@@ -1,5 +1,4 @@
 use std::{fmt, ops::Range};
-
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
@@ -51,6 +50,7 @@ impl Line {
                         },
                         |replacement| (Some(replacement), GraphemeWidth::Half),
                     );
+
                 TextFragment {
                     grapheme: grapheme.to_string(),
                     rendered_width,
@@ -59,6 +59,7 @@ impl Line {
             })
             .collect()
     }
+
     fn replacement_character(for_str: &str) -> Option<char> {
         let width = for_str.width();
         match for_str {
@@ -72,16 +73,16 @@ impl Line {
                         return Some('▯');
                     }
                 }
-                Some('.')
+                Some('·')
             }
             _ => None,
         }
     }
+
     pub fn get_visible_graphemes(&self, range: Range<usize>) -> String {
         if range.start >= range.end {
             return String::new();
         }
-
         let mut result = String::new();
         let mut current_pos = 0;
         for fragment in &self.fragments {
@@ -103,6 +104,7 @@ impl Line {
         }
         result
     }
+
     pub fn grapheme_count(&self) -> usize {
         self.fragments.len()
     }
@@ -119,10 +121,11 @@ impl Line {
     pub fn width(&self) -> usize {
         self.width_until(self.grapheme_count())
     }
+
     pub fn insert_char(&mut self, character: char, at: usize) {
         let mut result = String::new();
 
-        for (index, fragment) in self.fragments.iter_mut().enumerate() {
+        for (index, fragment) in self.fragments.iter().enumerate() {
             if index == at {
                 result.push(character);
             }
@@ -138,21 +141,25 @@ impl Line {
     }
     pub fn delete(&mut self, at: usize) {
         let mut result = String::new();
-        for (index, fragment) in self.fragments.iter_mut().enumerate() {
+
+        for (index, fragment) in self.fragments.iter().enumerate() {
             if index != at {
                 result.push_str(&fragment.grapheme);
             }
         }
         self.fragments = Self::str_to_fragments(&result);
     }
+
     pub fn delete_last(&mut self) {
-        self.delete(self.grapheme_count().saturating_sub(1))
+        self.delete(self.grapheme_count().saturating_sub(1));
     }
+
     pub fn append(&mut self, other: &Self) {
         let mut concat = self.to_string();
         concat.push_str(&other.to_string());
         self.fragments = Self::str_to_fragments(&concat);
     }
+
     pub fn split(&mut self, at: usize) -> Self {
         if at > self.fragments.len() {
             return Self::default();
@@ -165,7 +172,7 @@ impl Line {
 }
 
 impl fmt::Display for Line {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         let result: String = self
             .fragments
             .iter()

@@ -1,5 +1,6 @@
-use super::{DocumentStatus, Size, Terminal, UIComponent};
 use std::io::Error;
+
+use super::{DocumentStatus, Size, Terminal, UIComponent};
 
 #[derive(Default)]
 pub struct StatusBar {
@@ -21,9 +22,11 @@ impl UIComponent for StatusBar {
     fn set_needs_redraw(&mut self, value: bool) {
         self.needs_redraw = value;
     }
+
     fn needs_redraw(&self) -> bool {
         self.needs_redraw
     }
+
     fn set_size(&mut self, size: Size) {
         self.size = size;
     }
@@ -31,6 +34,7 @@ impl UIComponent for StatusBar {
         // Assemble the first part of the status bar
         let line_count = self.current_status.line_count_to_string();
         let modified_indicator = self.current_status.modified_indicator_to_string();
+
         let beginning = format!(
             "{} - {line_count} {modified_indicator}",
             self.current_status.file_name
