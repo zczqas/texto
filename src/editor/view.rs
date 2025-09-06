@@ -41,7 +41,7 @@ impl View {
     pub fn load(&mut self, file_name: &str) {
         if let Ok(buffer) = Buffer::load(file_name) {
             self.buffer = buffer;
-            self.mark_redraw(true);
+            self.set_needs_redraw(true);
         }
     }
     fn save(&mut self) {
@@ -68,7 +68,7 @@ impl View {
     fn insert_newline(&mut self) {
         self.buffer.insert_newline(self.text_location);
         self.move_text_location(Direction::Right);
-        self.mark_redraw(true);
+        self.set_needs_redraw(true);
     }
     fn delete_backward(&mut self) {
         if self.text_location.line_index != 0 || self.text_location.grapheme_index != 0 {
@@ -78,7 +78,7 @@ impl View {
     }
     fn delete(&mut self) {
         self.buffer.delete(self.text_location);
-        self.mark_redraw(true);
+        self.set_needs_redraw(true);
     }
     fn insert_char(&mut self, character: char) {
         let old_len = self
@@ -97,7 +97,7 @@ impl View {
             // move right for an added grapheme (should be the regular case)
             self.move_text_location(Direction::Right);
         }
-        self.mark_redraw(true);
+        self.set_needs_redraw(true);
     }
     // endregion
 
@@ -133,7 +133,7 @@ impl View {
             false
         };
         if offset_changed {
-            self.mark_redraw(true);
+            self.set_needs_redraw(true);
         }
     }
     fn scroll_horizontally(&mut self, to: usize) {
@@ -148,7 +148,7 @@ impl View {
             false
         };
         if offset_changed {
-            self.mark_redraw(true);
+            self.set_needs_redraw(true);
         }
     }
     fn scroll_text_location_into_view(&mut self) {
@@ -259,7 +259,7 @@ impl View {
 }
 
 impl UIComponent for View {
-    fn mark_redraw(&mut self, value: bool) {
+    fn set_needs_redraw(&mut self, value: bool) {
         self.needs_redraw = value;
     }
     fn needs_redraw(&self) -> bool {
