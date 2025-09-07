@@ -152,12 +152,10 @@ impl Line {
     pub fn delete_last(&mut self) {
         self.delete(self.grapheme_count().saturating_sub(1));
     }
-
     pub fn append(&mut self, other: &Self) {
         self.string.push_str(&other.string);
         self.rebuild_fragments();
     }
-
     pub fn split(&mut self, at: usize) -> Self {
         if let Some(fragment) = self.fragments.get(at) {
             let remainder = self.string.split_off(fragment.start_byte_idx);
@@ -166,6 +164,26 @@ impl Line {
         } else {
             Self::default()
         }
+    }
+    fn byte_idx_to_grapheme_idx(&self, byte_idx: usize) -> usize {
+        for (grapheme_idx, fragment) in self.fragments.iter().enumerate() {
+            if fragment.start_byte_idx >= byte_idx {
+                return grapheme_idx;
+            }
+        }
+        #[cfg(debug_assertions)]
+        {
+            panic!("Invalid byte_idx passed to byte_idx_to_grapheme_idx: {byte_idx:?}");
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            0
+        }
+    }
+    pub fn search(&self, query: &str) -> Option<usize> {
+        self.string
+            .find(query)
+            .map(|byte_idx| self.byte_idx_to_grapheme_idx(byte_idx))
     }
 }
 
