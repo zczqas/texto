@@ -1,4 +1,4 @@
-use crossterm::event::{Event, KeyEvent, KeyEventKind, read};
+use crossterm::event::{read, Event, KeyEvent, KeyEventKind};
 use std::{
     env,
     io::Error,
@@ -195,7 +195,6 @@ impl Editor {
             System(Search) => self.set_prompt(PromptType::Search),
             System(Save) => self.handle_save_command(),
             Edit(edit_command) => self.view.handle_edit_command(edit_command),
-
             Move(move_command) => self.view.handle_move_command(move_command),
         }
     }

@@ -13,7 +13,6 @@ enum GraphemeWidth {
 
 type GraphemeIdx = usize;
 type ByteIdx = usize;
-
 impl GraphemeWidth {
     const fn saturating_add(self, other: usize) -> usize {
         match self {
@@ -42,9 +41,10 @@ impl Line {
         let fragments = Self::str_to_fragments(line_str);
         Self {
             fragments,
-            string: String::new(),
+            string: String::from(line_str),
         }
     }
+
     fn str_to_fragments(line_str: &str) -> Vec<TextFragment> {
         line_str
             .grapheme_indices(true)
@@ -71,9 +71,11 @@ impl Line {
             })
             .collect()
     }
+
     fn rebuild_fragments(&mut self) {
         self.fragments = Self::str_to_fragments(&self.string);
     }
+
     fn get_replacement_character(for_str: &str) -> Option<char> {
         let width = for_str.width();
         match for_str {
@@ -92,6 +94,7 @@ impl Line {
             _ => None,
         }
     }
+
     pub fn get_visible_graphemes(&self, range: Range<GraphemeIdx>) -> String {
         if range.start >= range.end {
             return String::new();
@@ -117,6 +120,7 @@ impl Line {
         }
         result
     }
+
     pub fn grapheme_count(&self) -> GraphemeIdx {
         self.fragments.len()
     }
@@ -159,10 +163,12 @@ impl Line {
     pub fn delete_last(&mut self) {
         self.delete(self.grapheme_count().saturating_sub(1));
     }
+
     pub fn append(&mut self, other: &Self) {
         self.string.push_str(&other.string);
         self.rebuild_fragments();
     }
+
     pub fn split(&mut self, at: GraphemeIdx) -> Self {
         if let Some(fragment) = self.fragments.get(at) {
             let remainder = self.string.split_off(fragment.start_byte_idx);

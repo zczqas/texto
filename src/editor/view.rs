@@ -1,17 +1,16 @@
 use std::{cmp::min, io::Error};
 
 use super::{
-    Col, DocumentStatus, Line, NAME, Position, Row, Size, Terminal, UIComponent, VERSION,
     command::{Edit, Move},
+    Col, DocumentStatus, Line, Position, Row, Size, Terminal, UIComponent, NAME, VERSION,
 };
 mod buffer;
-mod fileinfo;
-mod location;
-mod searchinfo;
-
 use buffer::Buffer;
-use fileinfo::FileInfo;
+mod location;
 use location::Location;
+mod fileinfo;
+use fileinfo::FileInfo;
+mod searchinfo;
 use searchinfo::SearchInfo;
 
 #[derive(Default)]
@@ -33,11 +32,12 @@ impl View {
             is_modified: self.buffer.dirty,
         }
     }
+
     pub const fn is_file_loaded(&self) -> bool {
         self.buffer.is_file_loaded()
     }
 
-    // region search
+    // region: search
     pub fn enter_search(&mut self) {
         self.search_info = Some(SearchInfo {
             prev_location: self.text_location,
@@ -56,6 +56,7 @@ impl View {
         }
         self.search_info = None;
     }
+
     pub fn search(&mut self, query: &str) {
         if let Some(search_info) = &mut self.search_info {
             search_info.query = Line::from(query);
@@ -68,15 +69,14 @@ impl View {
             if query.is_empty() {
                 return;
             }
-
             if let Some(location) = self.buffer.search(query, from) {
                 self.text_location = location;
                 self.center_text_location();
-            } else {
-                #[cfg(debug_assertions)]
-                {
-                    panic!("Attempting to search_from without search_info");
-                }
+            }
+        } else {
+            #[cfg(debug_assertions)]
+            {
+                panic!("Attempting to search_from without search_info");
             }
         }
     }
@@ -131,7 +131,7 @@ impl View {
     pub fn handle_move_command(&mut self, command: Move) {
         let Size { height, .. } = self.size;
         // This match moves the positon, but does not check for all boundaries.
-        // The final borderline checking happens after the match statement.
+        // The final boundarline checking happens after the match statement.
         match command {
             Move::Up => self.move_up(1),
             Move::Down => self.move_down(1),
@@ -176,7 +176,7 @@ impl View {
             .map_or(0, Line::grapheme_count);
         let grapheme_delta = new_len.saturating_sub(old_len);
         if grapheme_delta > 0 {
-            // Move right for an added grapheme (should be the regular case)
+            //move right for an added grapheme (should be the regular case)
             self.handle_move_command(Move::Right);
         }
         self.set_needs_redraw(true);
@@ -252,6 +252,7 @@ impl View {
     // endregion
 
     // region: Location and Position Handling
+
     pub fn caret_position(&self) -> Position {
         self.text_location_to_position()
             .saturating_sub(self.scroll_offset)
@@ -266,9 +267,11 @@ impl View {
             .map_or(0, |line| line.width_until(self.text_location.grapheme_idx));
         Position { col, row }
     }
+
     // endregion
 
     // region: text location movement
+
     fn move_up(&mut self, step: usize) {
         self.text_location.line_idx = self.text_location.line_idx.saturating_sub(step);
         self.snap_to_valid_grapheme();
@@ -316,7 +319,7 @@ impl View {
             .map_or(0, Line::grapheme_count);
     }
 
-    // Ensures self.location.grapheme_index points to a valid grapheme index by snapping it to the left most grapheme if appropriate.
+    // Ensures self.location.grapheme_idx points to a valid grapheme index by snapping it to the left most grapheme if appropriate.
     // Doesn't trigger scrolling.
     fn snap_to_valid_grapheme(&mut self) {
         self.text_location.grapheme_idx = self
@@ -327,7 +330,7 @@ impl View {
                 min(line.grapheme_count(), self.text_location.grapheme_idx)
             });
     }
-    // Ensures self.location.line_index points to a valid line index by snapping it to the bottom most line if appropriate.
+    // Ensures self.location.line_idx points to a valid line index by snapping it to the bottom most line if appropriate.
     // Doesn't trigger scrolling.
     fn snap_to_valid_line(&mut self) {
         self.text_location.line_idx = min(self.text_location.line_idx, self.buffer.height());

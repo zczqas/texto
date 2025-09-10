@@ -1,10 +1,9 @@
-use std::fs::{File, read_to_string};
-use std::io::Error;
-use std::io::Write;
-
 use super::FileInfo;
 use super::Line;
 use super::Location;
+use std::fs::{read_to_string, File};
+use std::io::Error;
+use std::io::Write;
 
 #[derive(Default)]
 pub struct Buffer {
@@ -44,7 +43,7 @@ impl Buffer {
             }
         }
         // Search from the top of the document until (and including) the current line
-        for (line_idx, line) in self.lines.iter().enumerate().take(from.line_idx) {
+        for (line_idx, line) in self.lines.iter().enumerate().take(from.line_idx){
             if let Some(grapheme_idx) = line.search(query, 0) {
                 // After wrapping around to the top, we can always start at the beginning of the line.
                 return Some(Location {
@@ -105,12 +104,12 @@ impl Buffer {
                 && self.height() > at.line_idx.saturating_add(1)
             {
                 let next_line = self.lines.remove(at.line_idx.saturating_add(1));
-                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statement
+                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statment
                 #[allow(clippy::indexing_slicing)]
                 self.lines[at.line_idx].append(&next_line);
                 self.dirty = true;
             } else if at.grapheme_idx < line.grapheme_count() {
-                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statement
+                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statment
                 #[allow(clippy::indexing_slicing)]
                 self.lines[at.line_idx].delete(at.grapheme_idx);
                 self.dirty = true;

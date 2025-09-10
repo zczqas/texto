@@ -1,6 +1,6 @@
 use std::{cmp::min, io::Error};
 
-use super::{Line, Size, Terminal, UIComponent, command::Edit};
+use super::{command::Edit, Line, Size, Terminal, UIComponent};
 
 #[derive(Default)]
 pub struct CommandBar {
@@ -50,12 +50,9 @@ impl UIComponent for CommandBar {
         self.size = size;
     }
     fn draw(&mut self, origin: usize) -> Result<(), Error> {
-        // This is how much space there is between the right side of the prompt and the edge of the bar
-        let area_for_value = self.size.width.saturating_sub(self.prompt.len());
-        // We always want to show the left part of the value, therefore the end of the visible range we try to access will be equal to the full width
-        let value_end = self.value.width();
-        // This should give us the start for the grapheme subrange we want to print out.
-        let value_start = value_end.saturating_sub(area_for_value);
+        let area_for_value = self.size.width.saturating_sub(self.prompt.len()); //this is how much space there is between the right side of the prompt and the edge of the bar
+        let value_end = self.value.width(); // we always want to show the left part of the value, therefore the end of the visible range we try to access will be equal to the full width
+        let value_start = value_end.saturating_sub(area_for_value); //This should give us the start for the grapheme subrange we want to print out.
         let message = format!(
             "{}{}",
             self.prompt,
