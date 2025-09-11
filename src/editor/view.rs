@@ -13,7 +13,7 @@ use fileinfo::FileInfo;
 mod searchinfo;
 use searchinfo::SearchInfo;
 
-#[derive(Default, Eq, PartialEq, Copy, Clone)]
+#[derive(Default, Eq, PartialEq, Clone, Copy)]
 pub enum SearchDirection {
     #[default]
     Forward,
@@ -70,9 +70,10 @@ impl View {
         }
         self.search_in_direction(self.text_location, SearchDirection::default());
     }
+
     // Attempts to get the current search query - for scenarios where the search query absolutely must be there.
     // Panics if not present in debug, or if search info is not present in debug
-    // Returns None on release
+    // Returns None on release.
     fn get_search_query(&self) -> Option<&Line> {
         let query = self
             .search_info
@@ -85,6 +86,7 @@ impl View {
         );
         query
     }
+
     fn search_in_direction(&mut self, from: Location, direction: SearchDirection) {
         if let Some(location) = self.get_search_query().and_then(|query| {
             if query.is_empty() {
@@ -103,6 +105,7 @@ impl View {
         let step_right = self
             .get_search_query()
             .map_or(1, |query| min(query.grapheme_count(), 1));
+
         let location = Location {
             line_idx: self.text_location.line_idx,
             grapheme_idx: self.text_location.grapheme_idx.saturating_add(step_right), //Start the new search behind the current match

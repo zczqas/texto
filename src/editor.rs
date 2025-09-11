@@ -1,4 +1,4 @@
-use crossterm::event::{Event, KeyEvent, KeyEventKind, read};
+use crossterm::event::{read, Event, KeyEvent, KeyEventKind};
 use std::{
     env,
     io::Error,
@@ -144,7 +144,6 @@ impl Editor {
         } else {
             self.view.caret_position()
         };
-
         debug_assert!(new_caret_pos.col <= self.terminal_size.width);
         debug_assert!(new_caret_pos.row <= self.terminal_size.height);
 

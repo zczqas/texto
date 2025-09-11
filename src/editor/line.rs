@@ -225,7 +225,7 @@ impl Line {
         from_grapheme_idx: GraphemeIdx,
     ) -> Option<GraphemeIdx> {
         debug_assert!(from_grapheme_idx <= self.grapheme_count());
-        if from_grapheme_idx <= self.grapheme_count() {
+        if from_grapheme_idx == self.grapheme_count() {
             return None;
         }
         let start_byte_idx = self.grapheme_idx_to_byte_idx(from_grapheme_idx);
@@ -240,16 +240,17 @@ impl Line {
         from_grapheme_idx: GraphemeIdx,
     ) -> Option<GraphemeIdx> {
         debug_assert!(from_grapheme_idx <= self.grapheme_count());
+
         if from_grapheme_idx == 0 {
             return None;
         }
-        let end_byte_type = if from_grapheme_idx == self.grapheme_count() {
+        let end_byte_index = if from_grapheme_idx == self.grapheme_count() {
             self.string.len()
         } else {
             self.grapheme_idx_to_byte_idx(from_grapheme_idx)
         };
         self.string
-            .get(..end_byte_type)
+            .get(..end_byte_index)
             .and_then(|substr| substr.match_indices(query).last())
             .map(|(index, _)| self.byte_idx_to_grapheme_idx(index))
     }

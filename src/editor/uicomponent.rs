@@ -30,7 +30,7 @@ pub trait UIComponent {
                 }
             } else {
                 self.set_needs_redraw(false);
-            }
+            }      
         }
     }
     // Method to actually draw the component, must be implemented by each component
