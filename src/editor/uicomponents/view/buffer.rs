@@ -1,7 +1,7 @@
 use super::FileInfo;
 use super::Line;
 use super::Location;
-use std::fs::{read_to_string, File};
+use std::fs::{File, read_to_string};
 use std::io::Error;
 use std::io::Write;
 
@@ -37,7 +37,8 @@ impl Buffer {
             .enumerate()
             .cycle()
             .skip(from.line_idx)
-            .take(self.lines.len().saturating_add(1)) //taking one more, to search the current line twice (once from the middle, once from the start)
+            .take(self.lines.len().saturating_add(1))
+        //taking one more, to search the current line twice (once from the middle, once from the start)
         {
             let from_grapheme_idx = if is_first {
                 is_first = false;
@@ -65,7 +66,12 @@ impl Buffer {
             .enumerate()
             .rev()
             .cycle()
-            .skip(self.lines.len().saturating_sub(from.line_idx).saturating_sub(1))
+            .skip(
+                self.lines
+                    .len()
+                    .saturating_sub(from.line_idx)
+                    .saturating_sub(1),
+            )
             .take(self.lines.len().saturating_add(1))
         {
             let from_grapheme_idx = if is_first {
@@ -137,12 +143,12 @@ impl Buffer {
                 && self.height() > at.line_idx.saturating_add(1)
             {
                 let next_line = self.lines.remove(at.line_idx.saturating_add(1));
-                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statment
+                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statement
                 #[allow(clippy::indexing_slicing)]
                 self.lines[at.line_idx].append(&next_line);
                 self.dirty = true;
             } else if at.grapheme_idx < line.grapheme_count() {
-                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statment
+                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statement
                 #[allow(clippy::indexing_slicing)]
                 self.lines[at.line_idx].delete(at.grapheme_idx);
                 self.dirty = true;
