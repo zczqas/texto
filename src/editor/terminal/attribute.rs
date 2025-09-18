@@ -1,6 +1,6 @@
 use crossterm::style::Color;
 
-use crate::editor::annotatedstring::AnnotationType;
+use super::super::AnnotationType;
 
 pub struct Attribute {
     pub foreground: Option<Color>,
@@ -17,9 +17,9 @@ impl From<AnnotationType> for Attribute {
                     b: 255,
                 }),
                 background: Some(Color::Rgb {
-                    r: 100,
-                    g: 100,
-                    b: 100,
+                    r: 211,
+                    g: 211,
+                    b: 211,
                 }),
             },
             AnnotationType::SelectedMatch => Self {
