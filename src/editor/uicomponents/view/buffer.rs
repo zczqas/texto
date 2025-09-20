@@ -3,7 +3,7 @@ use super::FileInfo;
 use super::Highlighter;
 use super::Line;
 use crate::prelude::*;
-use std::fs::{File, read_to_string};
+use std::fs::{read_to_string, File};
 use std::io::Error;
 use std::io::Write;
 use std::ops::Range;
@@ -179,12 +179,12 @@ impl Buffer {
                 && self.height() > at.line_idx.saturating_add(1)
             {
                 let next_line = self.lines.remove(at.line_idx.saturating_add(1));
-                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statment
+                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statement
                 #[allow(clippy::indexing_slicing)]
                 self.lines[at.line_idx].append(&next_line);
                 self.dirty = true;
             } else if at.grapheme_idx < line.grapheme_count() {
-                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statment
+                // clippy::indexing_slicing: We checked for existence of this line in the surrounding if statement
                 #[allow(clippy::indexing_slicing)]
                 self.lines[at.line_idx].delete(at.grapheme_idx);
                 self.dirty = true;

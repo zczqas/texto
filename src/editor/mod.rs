@@ -1,23 +1,24 @@
 use crate::prelude::*;
-use crossterm::event::{Event, KeyEvent, KeyEventKind, read};
+use crossterm::event::{read, Event, KeyEvent, KeyEventKind};
 use std::{
     env,
     io::Error,
     panic::{set_hook, take_hook},
 };
 mod annotatedstring;
-mod annotation;
 pub mod annotationtype;
 mod command;
 mod documentstatus;
 mod line;
 mod terminal;
 mod uicomponents;
-use annotation::Annotation;
 pub use annotationtype::AnnotationType;
-
+mod annotation;
+use annotation::Annotation;
+mod filetype;
 use annotatedstring::AnnotatedString;
 use documentstatus::DocumentStatus;
+use filetype::FileType;
 use line::Line;
 use terminal::Terminal;
 use uicomponents::{CommandBar, MessageBar, StatusBar, UIComponent, View};

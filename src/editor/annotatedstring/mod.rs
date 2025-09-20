@@ -3,7 +3,6 @@ use std::{
     cmp::{max, min},
     fmt::{self, Display},
 };
-
 mod annotatedstringpart;
 use annotatedstringpart::AnnotatedStringPart;
 mod annotatedstringiterator;

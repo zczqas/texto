@@ -29,17 +29,16 @@ impl From<AnnotationType> for Attribute {
                     b: 255,
                 }),
                 background: Some(Color::Rgb {
-                    r: 148,
-                    g: 226,
-                    b: 213,
+                    r: 255,
+                    g: 255,
+                    b: 153,
                 }),
             },
-
             AnnotationType::Digit => Self {
                 foreground: Some(Color::Rgb {
-                    r: 243,
-                    g: 139,
-                    b: 168,
+                    r: 255,
+                    g: 99,
+                    b: 71,
                 }),
                 background: None,
             },
