@@ -34,6 +34,15 @@ impl From<AnnotationType> for Attribute {
                     b: 213,
                 }),
             },
+
+            AnnotationType::Digit => Self {
+                foreground: Some(Color::Rgb {
+                    r: 243,
+                    g: 139,
+                    b: 168,
+                }),
+                background: None,
+            },
         }
     }
 }
