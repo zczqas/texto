@@ -34,11 +34,11 @@ impl From<AnnotationType> for Attribute {
                     b: 153,
                 }),
             },
-            AnnotationType::Digit => Self {
+            AnnotationType::Number => Self {
                 foreground: Some(Color::Rgb {
-                    r: 255,
-                    g: 99,
-                    b: 71,
+                    r: 243,
+                    g: 139,
+                    b: 68,
                 }),
                 background: None,
             },
