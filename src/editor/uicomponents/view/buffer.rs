@@ -3,7 +3,7 @@ use super::FileInfo;
 use super::Highlighter;
 use super::Line;
 use crate::prelude::*;
-use std::fs::{read_to_string, File};
+use std::fs::{File, read_to_string};
 use std::io::Error;
 use std::io::Write;
 use std::ops::Range;
@@ -39,7 +39,7 @@ impl Buffer {
         highlighter: &Highlighter,
     ) -> Option<AnnotatedString> {
         self.lines.get(line_idx).map(|line| {
-            line.get_annotated_visible_substr(range, highlighter.get_annotations(line_idx))
+            line.get_annotated_visible_substr(range, Some(&highlighter.get_annotations(line_idx)))
         })
     }
 
